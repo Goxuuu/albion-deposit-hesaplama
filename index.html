@@ -329,6 +329,7 @@ function removeMaterial(btn){
   updateGuide();
 }
 
+// <<< GÜNCELLENMİŞ CALCULATE() >>> //
 function calculate() {
   let cards = document.querySelectorAll(".material-card");
   let totalMaterial = 0;
@@ -347,16 +348,21 @@ function calculate() {
   let profit = revenue - totalCost;
   let profitPercent = (totalCost > 0) ? (profit / totalCost) * 100 : 0;
 
+  // Return rate = net gelir / toplam maliyet * 100
+  let returnRate = (totalCost > 0) ? (revenue / totalCost) * 100 : 0;
+
   let resultHTML = `Toplam malzeme maliyeti: ${totalMaterial.toFixed(2)} silver<br>`;
   resultHTML += `Craft ücreti: ${craftFee.toFixed(2)} silver<br>`;
   resultHTML += `Toplam maliyet: ${totalCost.toFixed(2)} silver<br>`;
   resultHTML += `Net gelir: ${revenue.toFixed(2)} silver<br>`;
   resultHTML += (profit >= 0)
-    ? `<span class="profit">Kar: ${profit.toFixed(2)} silver (+${profitPercent.toFixed(2)}%)</span>`
-    : `<span class="loss">Zarar: ${profit.toFixed(2)} silver (${profitPercent.toFixed(2)}%)</span>`;
+    ? `<span class="profit">Kar: ${profit.toFixed(2)} silver (+${profitPercent.toFixed(2)}%)</span><br>`
+    : `<span class="loss">Zarar: ${profit.toFixed(2)} silver (${profitPercent.toFixed(2)}%)</span><br>`;
+  resultHTML += `💹 Return Rate: ${returnRate.toFixed(2)}%`;
 
   document.getElementById("result").innerHTML = resultHTML;
 }
+// <<< /GÜNCELLENMİŞ CALCULATE() >>> //
 
 function fetchMarket() {
   let item = document.getElementById("marketItem").value.trim();
@@ -408,6 +414,5 @@ function updateGuide(){
 </body>
 </html>
 
-</html>
 
 
