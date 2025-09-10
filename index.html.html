@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Albion Online Craft Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #121212;
+      color: #e6e6e6;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #d4af37;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .material-card, .recipe-card {
+      display: flex;
+      align-items: center;
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    select, input {
+      margin-left: 10px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: none;
+    }
+    input {
+      width: 100px;
+    }
+    .btn {
+      padding: 10px 20px;
+      background: #d4af37;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: bold;
+      margin: 10px 5px;
+      transition: 0.2s;
+    }
+    .btn:hover {
+      background: #f0c94d;
+      transform: scale(1.05);
+    }
+    img {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      margin-right: 10px;
+    }
+    .result {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      font-size: 16px;
+      line-height: 1.5em;
+    }
+    .profit {
+      color: #4caf50;
+      font-weight: bold;
+    }
+    .loss {
+      color: #f44336;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Albion Online Craft Calculator</h1>
+
+  <h2>Hammaddeler</h2>
+  <div id="materials"></div>
+  <button class="btn" onclick="addMaterial()">+ Hammadde Ekle</button>
+
+  <h2>Crafting Ayarları</h2>
+  <label>Return Rate %: <input id="returnRate" type="number" value="48"></label><br><br>
+  <label>Craft Fee %: <input id="craftFee" type="number" value="20"></label><br><br>
+  <label>Satis fiyati (silver): <input id="sellPrice" type="number"></label><br><br>
+  <label>Tax %: <input id="tax" type="number" step="0.1" value="6.5"></label><br><br>
+
+  <button class="btn" onclick="calculate()">Hesapla</button>
+
+  <div id="result" class="result"></div>
+
+  <script>
+    const items = {
+      "Raw Beef": "https://render.albiononline.com/v1/item/T7_MEAT_BEEF.png",
+      "Carrot": "https://render.albiononline.com/v1/item/T3_FARM_CARROT.png",
+      "Flour": "https://render.albiononline.com/v1/item/T3_FARM_FLOUR.png",
+      "Onion": "https://render.albiononline.com/v1/item/T5_FARM_ONION.png",
+      "Raw Fish": "https://render.albiononline.com/v1/item/T7_FISH_FRESHWATER_ALL_COMMON.png",
+      "Milk": "https://render.albiononline.com/v1/item/T1_FARM_MILK.png",
+      "Egg": "https://render.albiononline.com/v1/item/T1_FARM_EGG.png",
+      "Potato": "https://render.albiononline.com/v1/item/T3_FARM_POTATO.png",
+      "Pork": "https://render.albiononline.com/v1/item/T7_MEAT_PORK.png"
+    };
+
+    const recipes = [
+      {name: "T7 Beef Stew", image: "https://render.albiononline.com/v1/item/T7_MEAL_BEEFSTEW.png", ingredients: ["Raw Beef", "Flour", "Carrot", "Onion"]},
+      {name: "T7 Fish Pie", image: "https://render.albiononline.com/v1/item/T7_MEAL_FISHPIE.png", ingredients: ["Raw Fish", "Flour", "Milk"]},
+      {name: "T7 Omelette", image: "https://render.albiononline.com/v1/item/T7_MEAL_OMELETTE.png", ingredients: ["Egg", "Milk"]},
+      {name: "T7 Pork Pie", image: "https://render.albiononline.com/v1/item/T7_MEAL_PORKPIE.png", ingredients: ["Pork", "Flour", "Egg", "Milk"]}
+    ];
+
+    function addMaterial() {
+      let container = document.getElementById("materials");
+      let card = document.createElement("div");
+      card.className = "material-card";
+      card.innerHTML = `
+        <img src="${items['Raw Beef']}">
+        <select onchange="updateIcon(this)">
+          ${Object.keys(items).map(i => `<option value="${i}">${i}</option>`).join("")}
+        </select>
+        <input type="number" placeholder="Adet">
+        <input type="number" placeholder="Birim fiyat">
+      `;
+      container.appendChild(card);
+    }
+
+    function updateIcon(select) {
+      let img = select.parentElement.querySelector("img");
+      img.src = items[select.value];
+    }
+
+    function calculate() {
+      let cards = document.querySelectorAll(".material-card");
+      let materialCounts = {};
+      let totalMaterial = 0;
+      cards.forEach(card => {
+        let itemName = card.children[1].value;
+        let qty = parseFloat(card.children[2].value) || 0;
+        let price = parseFloat(card.children[3].value) || 0;
+        totalMaterial += qty * price;
+        materialCounts[itemName] = (materialCounts[itemName] || 0) + qty;
+      });
+
+      let returnRate = parseFloat(document.getElementById("returnRate").value) || 0;
+      let craftFee = parseFloat(document.getElementById("craftFee").value) || 0;
+      let sellPrice = parseFloat(document.getElementById("sellPrice").value) || 0;
+      let tax = parseFloat(document.getElementById("tax").value) || 0;
+
+      let netMaterial = totalMaterial * (1 - returnRate / 100);
+      let fee = netMaterial * (craftFee / 100);
+      let totalCost = netMaterial + fee;
+      let revenue = sellPrice * (1 - tax / 100);
+      let profit = revenue - totalCost;
+      let profitPercent = (totalCost > 0) ? (profit / totalCost) * 100 : 0;
+
+      let possibleRecipes = recipes.filter(r => {
+        return r.ingredients.every(ing => (materialCounts[ing] || 0) > 0);
+      });
+
+      let resultHTML = `Toplam malzeme maliyeti: ${totalMaterial.toFixed(2)} silver<br>`;
+      resultHTML += `Net malzeme maliyeti (Return %${returnRate}): ${netMaterial.toFixed(2)} silver<br>`;
+      resultHTML += `Craft ücreti: ${fee.toFixed(2)} silver<br>`;
+      resultHTML += `Toplam maliyet: ${totalCost.toFixed(2)} silver<br>`;
+      resultHTML += `Net gelir: ${revenue.toFixed(2)} silver<br>`;
+      resultHTML += (profit >= 0 ? `<span class="profit">NET KAR: ${profit.toFixed(2)} silver (%${profitPercent.toFixed(2)})</span>` :
+        `<span class="loss">NET ZARAR: ${profit.toFixed(2)} silver (%${profitPercent.toFixed(2)})</span>`);
+
+      if (possibleRecipes.length > 0) {
+        resultHTML += "<br><br><b>Üretilebilecek Yemekler:</b><br>";
+        possibleRecipes.forEach(r => {
+          resultHTML += `<div class='recipe-card'><img src='${r.image}'>${r.name}</div>`;
+        });
+      } else {
+        resultHTML += "<br><br>Seçilen hammaddelerle üretilebilecek yemek yok.";
+      }
+
+      document.getElementById("result").innerHTML = resultHTML;
+    }
+  </script>
+</body>
+</html>
+
