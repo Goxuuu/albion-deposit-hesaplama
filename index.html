@@ -1,184 +1,413 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Albion Online Craft Calculator</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #121212;
-      color: #e6e6e6;
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 20px;
-    }
-    h1 {
-      color: #d4af37;
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .material-card, .recipe-card {
-      display: flex;
-      align-items: center;
-      background: #1e1e1e;
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    }
-    select, input {
-      margin-left: 10px;
-      padding: 6px 8px;
-      border-radius: 6px;
-      border: none;
-    }
-    input {
-      width: 100px;
-    }
-    .btn {
-      padding: 10px 20px;
-      background: #d4af37;
-      border: none;
-      cursor: pointer;
-      border-radius: 6px;
-      font-weight: bold;
-      margin: 10px 5px;
-      transition: 0.2s;
-    }
-    .btn:hover {
-      background: #f0c94d;
-      transform: scale(1.05);
-    }
-    img {
-      width: 64px;
-      height: 64px;
-      border-radius: 8px;
-      margin-right: 10px;
-    }
-    .result {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 20px;
-      font-size: 16px;
-      line-height: 1.5em;
-    }
-    .profit {
-      color: #4caf50;
-      font-weight: bold;
-    }
-    .loss {
-      color: #f44336;
-      font-weight: bold;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Albion Craft Calculator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;500&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+  color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  text-align: center;
+  padding: 30px 20px;
+  background: linear-gradient(45deg, #d4af37, #f0c94d);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+  color: #1e1e1e;
+  font-size: 2.2em;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+}
+
+nav {
+  text-align: center;
+  padding: 15px;
+  background: rgba(30,30,30,0.9);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+nav a {
+  margin: 0 15px;
+  color: #f0c94d;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+nav a:hover { color: #fff; }
+
+.container {
+  max-width: 1400px;
+  margin: 20px auto;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.section {
+  background: rgba(30,30,30,0.95);
+  border-radius: 15px;
+  padding: 20px;
+  flex: 1 1 400px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  min-width: 350px;
+}
+
+h2 {
+  color: #f0c330;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.material-card {
+  display: flex;
+  align-items: center;
+  background: #1e1e1e;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  transition: transform 0.2s;
+}
+
+.material-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+}
+
+img {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+select, input {
+  margin-left: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  font-family: 'Roboto', sans-serif;
+}
+
+input { width: 100px; }
+
+.btn {
+  padding: 12px 25px;
+  background: #f0c94d;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: bold;
+  margin: 10px 5px;
+  transition: 0.3s;
+  color: #1e1e1e;
+  font-size: 1em;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+
+.btn:hover { background: #d4af37; transform: scale(1.05); }
+
+.result {
+  background: rgba(30,30,30,0.8);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.5em;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+}
+
+.profit { color: #4caf50; font-weight: bold; }
+.loss { color: #f44336; font-weight: bold; }
+label { display: block; margin-bottom: 10px; }
+
+/* Tarif / Guide */
+#guideContainer {
+  margin-top: 20px;
+}
+.guide-card {
+  background: #1e1e1e;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+.guide-card h4 { margin:0 0 5px 0; color:#f0c330; }
+.guide-card ul { padding-left:20px; margin:0; }
+
+/* Footer */
+footer {
+  background: rgba(30,30,30,0.95);
+  padding: 20px;
+  text-align: center;
+  margin-top: 40px;
+  border-top: 2px solid #f0c94d;
+}
+
+footer a { color: #f0c94d; margin: 0 10px; text-decoration: none; font-weight: bold; }
+footer a:hover { color: #fff; }
+
+/* Canlı Destek */
+#liveSupport {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(45deg,#f0c94d,#d4af37);
+  color: #1e1e1e;
+  font-weight: bold;
+  padding: 12px 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  cursor: pointer;
+  z-index: 999;
+  transition: 0.3s;
+}
+#liveSupport:hover { transform: scale(1.05); }
+
+#supportPopup {
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 300px;
+  background: #1e1e1e;
+  color: #f0f0f0;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+  z-index: 1000;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+  animation: fadeIn 0.5s ease;
+}
+@keyframes fadeIn {
+  from {opacity:0; transform: translateY(20px);}
+  to {opacity:1; transform: translateY(0);}
+}
+#supportHeader {
+  background: #f0c94d;
+  color: #1e1e1e;
+  padding: 10px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#supportHeader span { cursor: pointer; }
+#supportBody {
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+#supportInput {
+  width: calc(100% - 20px);
+  margin: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media(max-width:768px){
+  .container{flex-direction:column; padding:10px;}
+  #liveSupport{bottom:10px; right:10px;}
+  #supportPopup{width:90%;}
+}
+</style>
 </head>
 <body>
-  <h1>Albion Online Craft Calculator</h1>
+<header>Albion Craft Calculator</header>
 
-  <h2>Hammaddeler</h2>
-  <div id="materials"></div>
-  <button class="btn" onclick="addMaterial()">+ Hammadde Ekle</button>
+<nav>
+  <a href="#materials">Hammaddeler</a>
+  <a href="#settings">Craft Ayarları</a>
+  <a href="#market">Pazar</a>
+  <a href="#guide">Tarifler</a>
+</nav>
 
-  <h2>Crafting Ayarları</h2>
-  <label>Return Rate %: <input id="returnRate" type="number" value="48"></label><br><br>
-  <label>Craft Fee %: <input id="craftFee" type="number" value="20"></label><br><br>
-  <label>Satis fiyati (silver): <input id="sellPrice" type="number"></label><br><br>
-  <label>Tax %: <input id="tax" type="number" step="0.1" value="6.5"></label><br><br>
+<div class="container">
+  <div class="section" id="materials">
+    <h2>Hammaddeler</h2>
+    <div id="materialsContainer"></div>
+    <button class="btn" onclick="addMaterial()">+ Hammadde Ekle</button>
+  </div>
 
-  <button class="btn" onclick="calculate()">Hesapla</button>
+  <div class="section" id="settings">
+    <h2>Craft Ayarları</h2>
+    <label>Craft Ücreti (silver): <input id="craftFee" type="number" value="500"></label>
+    <label>Satış Fiyatı (silver): <input id="sellPrice" type="number"></label>
+    <label>Vergi %: <input id="tax" type="number" step="0.1" value="6.5"></label>
+    <button class="btn" onclick="calculate()">Hesapla</button>
+    <div id="result" class="result"></div>
+  </div>
 
-  <div id="result" class="result"></div>
+  <div class="section" id="market">
+    <h2>📊 Pazar</h2>
+    <label>Ürün İsmi: <input id="marketItem" type="text" placeholder="Örn: Raw Beef"></label>
+    <button class="btn" onclick="fetchMarket()">Fiyat Sorgula</button>
+    <div id="marketResult" class="result"></div>
+  </div>
 
-  <script>
-    const items = {
-      "Raw Beef": "https://render.albiononline.com/v1/item/T7_MEAT_BEEF.png",
-      "Carrot": "https://render.albiononline.com/v1/item/T3_FARM_CARROT.png",
-      "Flour": "https://render.albiononline.com/v1/item/T3_FARM_FLOUR.png",
-      "Onion": "https://render.albiononline.com/v1/item/T5_FARM_ONION.png",
-      "Raw Fish": "https://render.albiononline.com/v1/item/T7_FISH_FRESHWATER_ALL_COMMON.png",
-      "Milk": "https://render.albiononline.com/v1/item/T1_FARM_MILK.png",
-      "Egg": "https://render.albiononline.com/v1/item/T1_FARM_EGG.png",
-      "Potato": "https://render.albiononline.com/v1/item/T3_FARM_POTATO.png",
-      "Pork": "https://render.albiononline.com/v1/item/T7_MEAT_PORK.png"
-    };
+  <div class="section" id="guide">
+    <h2>📖 Tarif / Guide</h2>
+    <div id="guideContainer"></div>
+  </div>
+</div>
 
-    const recipes = [
-      {name: "T7 Beef Stew", image: "https://render.albiononline.com/v1/item/T7_MEAL_BEEFSTEW.png", ingredients: ["Raw Beef", "Flour", "Carrot", "Onion"]},
-      {name: "T7 Fish Pie", image: "https://render.albiononline.com/v1/item/T7_MEAL_FISHPIE.png", ingredients: ["Raw Fish", "Flour", "Milk"]},
-      {name: "T7 Omelette", image: "https://render.albiononline.com/v1/item/T7_MEAL_OMELETTE.png", ingredients: ["Egg", "Milk"]},
-      {name: "T7 Pork Pie", image: "https://render.albiononline.com/v1/item/T7_MEAL_PORKPIE.png", ingredients: ["Pork", "Flour", "Egg", "Milk"]}
-    ];
+<footer>
+  <p>© 2025 Albion Craft Calculator</p>
+  <a href="#">Discord</a> | <a href="#">Twitter</a> | <a href="#">İletişim</a>
+</footer>
 
-    function addMaterial() {
-      let container = document.getElementById("materials");
-      let card = document.createElement("div");
-      card.className = "material-card";
-      card.innerHTML = `
-        <img src="${items['Raw Beef']}">
-        <select onchange="updateIcon(this)">
-          ${Object.keys(items).map(i => `<option value="${i}">${i}</option>`).join("")}
-        </select>
-        <input type="number" placeholder="Adet">
-        <input type="number" placeholder="Birim fiyat">
-      `;
-      container.appendChild(card);
+<div id="liveSupport" onclick="openSupport()">💬 Canlı Destek</div>
+<div id="supportPopup">
+  <div id="supportHeader">Canlı Destek <span onclick="closeSupport()">✖</span></div>
+  <div id="supportBody">Merhaba! Size nasıl yardımcı olabiliriz?</div>
+  <input type="text" id="supportInput" placeholder="Mesajınızı yazın..." onkeydown="sendMessage(event)">
+</div>
+
+<script>
+const defaultIcon = "https://render.albiononline.com/v1/item/T1_TRASH.png";
+
+const items = {
+  "Raw Beef": "https://render.albiononline.com/v1/item/T7_MEAT_BEEF.png",
+  "Carrot": "https://render.albiononline.com/v1/item/T3_FARM_CARROT.png",
+  "Flour": "https://render.albiononline.com/v1/item/T3_FARM_FLOUR.png",
+  "Onion": "https://render.albiononline.com/v1/item/T5_FARM_ONION.png",
+  "Raw Fish": "https://render.albiononline.com/v1/item/T7_FISH_FRESHWATER_ALL_COMMON.png",
+  "Milk": "https://render.albiononline.com/v1/item/T1_FARM_MILK.png",
+  "Egg": "https://render.albiononline.com/v1/item/T1_FARM_EGG.png",
+  "Potato": "https://render.albiononline.com/v1/item/T3_FARM_POTATO.png",
+  "Pork": "https://render.albiononline.com/v1/item/T7_MEAT_PORK.png"
+};
+
+// Tarifler adım adım
+const recipes = [
+  {name:"Bread", steps:["Flour + Milk + Egg → Bread"], icon:"https://render.albiononline.com/v1/item/T3_FOOD_BREAD.png"},
+  {name:"Stew", steps:["Raw Beef + Carrot + Onion → Stew"], icon:"https://render.albiononline.com/v1/item/T5_FOOD_STEW.png"},
+  {name:"Fish Meal", steps:["Raw Fish + Potato → Fish Meal"], icon:"https://render.albiononline.com/v1/item/T5_FOOD_FISHMEAL.png"}
+];
+
+function addMaterial() {
+  let container = document.getElementById("materialsContainer");
+  let card = document.createElement("div");
+  card.className = "material-card";
+  card.innerHTML = `
+    <img src="${defaultIcon}">
+    <select onchange="updateIcon(this)">
+      ${Object.keys(items).map(i => `<option value="${i}">${i}</option>`).join("")}
+    </select>
+    <input type="number" placeholder="Adet">
+    <input type="number" placeholder="Birim Fiyat">
+    <button onclick="removeMaterial(this)" style="margin-left:10px;padding:4px 8px;border:none;border-radius:6px;cursor:pointer;">❌</button>
+  `;
+  container.appendChild(card);
+  updateGuide();
+}
+
+function updateIcon(select) {
+  let img = select.parentElement.querySelector("img");
+  img.src = items[select.value] || defaultIcon;
+  updateGuide();
+}
+
+function removeMaterial(btn){ 
+  btn.parentElement.remove(); 
+  updateGuide();
+}
+
+function calculate() {
+  let cards = document.querySelectorAll(".material-card");
+  let totalMaterial = 0;
+  cards.forEach(card => {
+    let qty = parseFloat(card.children[2].value) || 0;
+    let price = parseFloat(card.children[3].value) || 0;
+    totalMaterial += qty * price;
+  });
+
+  let craftFee = parseFloat(document.getElementById("craftFee").value) || 0;
+  let sellPrice = parseFloat(document.getElementById("sellPrice").value) || 0;
+  let tax = parseFloat(document.getElementById("tax").value) || 0;
+
+  let totalCost = totalMaterial + craftFee;
+  let revenue = sellPrice * (1 - tax / 100);
+  let profit = revenue - totalCost;
+  let profitPercent = (totalCost > 0) ? (profit / totalCost) * 100 : 0;
+
+  let resultHTML = `Toplam malzeme maliyeti: ${totalMaterial.toFixed(2)} silver<br>`;
+  resultHTML += `Craft ücreti: ${craftFee.toFixed(2)} silver<br>`;
+  resultHTML += `Toplam maliyet: ${totalCost.toFixed(2)} silver<br>`;
+  resultHTML += `Net gelir: ${revenue.toFixed(2)} silver<br>`;
+  resultHTML += (profit >= 0)
+    ? `<span class="profit">Kar: ${profit.toFixed(2)} silver (+${profitPercent.toFixed(2)}%)</span>`
+    : `<span class="loss">Zarar: ${profit.toFixed(2)} silver (${profitPercent.toFixed(2)}%)</span>`;
+
+  document.getElementById("result").innerHTML = resultHTML;
+}
+
+function fetchMarket() {
+  let item = document.getElementById("marketItem").value.trim();
+  if (!item) {
+    document.getElementById("marketResult").innerHTML = "⚠️ Lütfen bir ürün girin.";
+    return;
+  }
+  document.getElementById("marketResult").innerHTML = `🔍 "${item}" için güncel fiyat yakında burada olacak!`;
+}
+
+// Canlı destek
+function openSupport() { document.getElementById("supportPopup").style.display = "block"; }
+function closeSupport() { document.getElementById("supportPopup").style.display = "none"; }
+function sendMessage(e){
+  if(e.key === "Enter"){
+    const input = document.getElementById("supportInput");
+    const body = document.getElementById("supportBody");
+    const msg = input.value.trim();
+    if(msg){
+      body.innerHTML += `<div>📝 Siz: ${msg}</div>`;
+      body.scrollTop = body.scrollHeight;
+      input.value = "";
+      setTimeout(()=> {
+        body.innerHTML += `<div>💬 Destek: Şu an çevrimdışı, mesajınızı aldık.</div>`;
+        body.scrollTop = body.scrollHeight;
+      },500);
     }
+  }
+}
 
-    function updateIcon(select) {
-      let img = select.parentElement.querySelector("img");
-      img.src = items[select.value];
-    }
+// Tarif guide adım adım
+function updateGuide(){
+  const guide = document.getElementById("guideContainer");
+  guide.innerHTML = "";
+  const cards = document.querySelectorAll(".material-card");
+  let userItems = [];
+  cards.forEach(c => userItems.push(c.children[1].value));
 
-    function calculate() {
-      let cards = document.querySelectorAll(".material-card");
-      let materialCounts = {};
-      let totalMaterial = 0;
-      cards.forEach(card => {
-        let itemName = card.children[1].value;
-        let qty = parseFloat(card.children[2].value) || 0;
-        let price = parseFloat(card.children[3].value) || 0;
-        totalMaterial += qty * price;
-        materialCounts[itemName] = (materialCounts[itemName] || 0) + qty;
-      });
-
-      let returnRate = parseFloat(document.getElementById("returnRate").value) || 0;
-      let craftFee = parseFloat(document.getElementById("craftFee").value) || 0;
-      let sellPrice = parseFloat(document.getElementById("sellPrice").value) || 0;
-      let tax = parseFloat(document.getElementById("tax").value) || 0;
-
-      let netMaterial = totalMaterial * (1 - returnRate / 100);
-      let fee = netMaterial * (craftFee / 100);
-      let totalCost = netMaterial + fee;
-      let revenue = sellPrice * (1 - tax / 100);
-      let profit = revenue - totalCost;
-      let profitPercent = (totalCost > 0) ? (profit / totalCost) * 100 : 0;
-
-      let possibleRecipes = recipes.filter(r => {
-        return r.ingredients.every(ing => (materialCounts[ing] || 0) > 0);
-      });
-
-      let resultHTML = `Toplam malzeme maliyeti: ${totalMaterial.toFixed(2)} silver<br>`;
-      resultHTML += `Net malzeme maliyeti (Return %${returnRate}): ${netMaterial.toFixed(2)} silver<br>`;
-      resultHTML += `Craft ücreti: ${fee.toFixed(2)} silver<br>`;
-      resultHTML += `Toplam maliyet: ${totalCost.toFixed(2)} silver<br>`;
-      resultHTML += `Net gelir: ${revenue.toFixed(2)} silver<br>`;
-      resultHTML += (profit >= 0 ? `<span class="profit">NET KAR: ${profit.toFixed(2)} silver (%${profitPercent.toFixed(2)})</span>` :
-        `<span class="loss">NET ZARAR: ${profit.toFixed(2)} silver (%${profitPercent.toFixed(2)})</span>`);
-
-      if (possibleRecipes.length > 0) {
-        resultHTML += "<br><br><b>Üretilebilecek Yemekler:</b><br>";
-        possibleRecipes.forEach(r => {
-          resultHTML += `<div class='recipe-card'><img src='${r.image}'>${r.name}</div>`;
-        });
-      } else {
-        resultHTML += "<br><br>Seçilen hammaddelerle üretilebilecek yemek yok.";
-      }
-
-      document.getElementById("result").innerHTML = resultHTML;
-    }
-  </script>
+  recipes.forEach(r => {
+    let canCraft = r.steps.every(s => r.ingredients ? r.ingredients.every(i => userItems.includes(i)) : true);
+    let card = document.createElement("div");
+    card.className = "guide-card";
+    let stepsHTML = r.steps.map(s => `<li>${s}</li>`).join("");
+    card.innerHTML = `<h4><img src="${r.icon}" style="vertical-align:middle;width:32px;height:32px;margin-right:5px;"> ${r.name} ${canCraft ? "✅ Yapılabilir" : "❌ Eksik Hammadde"}</h4><ul>${stepsHTML}</ul>`;
+    guide.appendChild(card);
+  });
+}
+</script>
 </body>
 </html>
+
+</html>
+
 
